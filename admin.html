@@ -4,101 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrador de Pedidos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 1rem;
-            text-align: center;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 1rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            background-color: #fff;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 1rem;
-            text-align: left;
-        }
-        th {
-            background-color: #333;
-            color: white;
-        }
-        footer {
-            text-align: center;
-            padding: 1rem;
-            background-color: #333;
-            color: #fff;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
-    <header>
-        <h1>Administrador de Pedidos</h1>
-    </header>
-    <div class="container">
-        <h2>Lista de Pedidos</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID de Pedido</th>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody id="ordersTableBody">
-                <!-- Los pedidos se mostrarán aquí -->
-            </tbody>
-        </table>
-    </div>
-    <footer>
-        <p>&copy; 2024 Tienda de Camisetas de Fútbol</p>
-    </footer>
+    <h1>Panel de Administración de Pedidos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>ID</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody id="adminOrdersTableBody">
+            <!-- Las filas de los pedidos se insertarán aquí -->
+        </tbody>
+    </table>
 
-    <script>
-        // Función para cargar los pedidos desde localStorage
-        function loadOrders() {
+    <script type="module">
+        // Cargar los pedidos almacenados en localStorage para la vista de administrador
+        function loadAdminOrders() {
             const orders = JSON.parse(localStorage.getItem('orders')) || [];
-            const ordersTableBody = document.getElementById('ordersTableBody');
-
-            // Limpiar tabla antes de cargar nuevos pedidos
-            ordersTableBody.innerHTML = '';
+            const tableBody = document.getElementById('adminOrdersTableBody');
+            tableBody.innerHTML = '';  // Limpiar la tabla antes de agregar nuevas filas
 
             orders.forEach(order => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${order.id}</td>
                     <td>${order.product}</td>
+                    <td>${order.id}</td>
                     <td>${order.quantity}</td>
-                    <td>$${order.price}</td>
-                    <td>$${(order.quantity * order.price).toFixed(2)}</td>
+                    <td>${order.price}</td>
                 `;
-                ordersTableBody.appendChild(row);
+                tableBody.appendChild(row);
             });
         }
 
-        // Llamar a la función para cargar los pedidos al cargar la página
-        loadOrders();
+        window.onload = loadAdminOrders;  // Cargar los pedidos cuando se carga la página
     </script>
 </body>
 </html>
