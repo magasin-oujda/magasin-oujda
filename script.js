@@ -1,69 +1,56 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const orderFormContainer = document.getElementById("order-form-container");
-    const submitOrderButton = document.getElementById("submit-order");
-    const closeFormButton = document.getElementById("close-form");
-    const adminAccessButton = document.getElementById("admin-access-button");
+function openOrderForm(product, price) {
+    document.getElementById('order-form').style.display = 'block';
+    document.getElementById('product').value = product;
+    document.getElementById('price').value = price;
+}
 
-    let selectedProduct = null;
+function submitOrder(event) {
+    event.preventDefault();
+    const order = {
+        name: document.getElementById('name').value,
+        address: document.getElementById('address').value,
+        phone: document.getElementById('phone').value,
+        product: document.getElementById('product').value,
+        price: document.getElementById('price').value
+    };
+    saveOrder(order);
+    document.getElementById('order-form').reset();
+    document.getElementById('order-form').style.display = 'none';
+}
 
-    // Show order form when a product is clicked
-    document.querySelectorAll(".order-button").forEach(button => {
-        button.addEventListener("click", (event) => {
-            const productElement = event.target.closest(".product");
-            selectedProduct = {
-                name: productElement.getAttribute("data-name"),
-                price: productElement.getAttribute("data-price")
-            };
-            orderFormContainer.classList.remove("hidden");
-        });
+function saveOrder(order) {
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.push(order);
+    localStorage.setItem('orders', JSON.stringify(orders));
+}
+
+function showAdminForm() {
+    document.getElementById('admin-form').style.display = 'block';
+}
+
+function validateAdmin() {
+    const password = document.getElementById('admin-password').value;
+    if (password === 'admin123') {
+        showOrders();
+    } else {
+        alert('Contraseña incorrecta');
+    }
+}
+
+function showOrders() {
+    document.getElementById('order-table').style.display = 'block';
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const ordersTable = document.getElementById('orders');
+    ordersTable.innerHTML = '';
+    orders.forEach(order => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${order.name}</td>
+            <td>${order.address}</td>
+            <td>${order.phone}</td>
+            <td>${order.product}</td>
+            <td>${order.price}</td>
+        `;
+        ordersTable.appendChild(row);
     });
-
-    // Close the order form
-    closeFormButton.addEventListener("click", () => {
-        orderFormContainer.classList.add("hidden");
-    });
-
-    // Submit the order and save it to local storage
-    submitOrderButton.addEventListener("click", () => {
-        const name = document.getElementById("customer-name").value;
-        const address = document.getElementById("customer-address").value;
-        const phone = document.getElementById("customer-phone").value;
-
-        if (name && address && phone && selectedProduct) {
-            const orders = JSON.parse(localStorage.getItem("orders")) || [];
-            orders.push({ name, address, phone, product: selectedProduct });
-            localStorage.setItem("orders", JSON.stringify(orders));
-
-            alert("تم إرسال الطلب بنجاح!");
-            orderFormContainer.classList.add("hidden");
-        } else {
-            alert("يرجى ملء جميع الحقول.");
-        }
-    });
-
-    // Show orders for admin
-    adminAccessButton.addEventListener("click", () => {
-        const password = prompt("يرجى إدخال كلمة المرور:");
-        if (password === "admin123") {
-            const orders = JSON.parse(localStorage.getItem("orders")) || [];
-            if (orders.length === 0) {
-                alert("لا توجد طلبات.");
-                return;
-            }
-
-            let tableContent = "<table><tr><th>الاسم</th><th>العنوان</th><th>رقم الهاتف</th><th>المنتج</th></tr>";
-            orders.forEach(order => {
-                tableContent += `<tr><td>${order.name}</td><td>${order.address}</td><td>${order.phone}</td><td>${order.product.name} - ${order.product.price} درهم</td></tr>`;
-            });
-            tableContent += "</table>";
-
-            const newWindow = window.open();
-            newWindow.document.write("<html><head><title>طلبات</title></head><body>");
-            newWindow.document.write("<h2>الطلبات</h2>");
-            newWindow.document.write(tableContent);
-            newWindow.document.write("</body></html>");
-        } else {
-            alert("كلمة المرور غير صحيحة.");
-        }
-    });
-});
+}
