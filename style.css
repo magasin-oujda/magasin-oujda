@@ -41,18 +41,39 @@ header {
     margin-top: 20px;
 }
 
-#admin-access-section {
+#order-form-container {
     display: none;
     text-align: center;
     margin-top: 20px;
 }
 
-#admin-login {
-    margin-top: 20px;
-    text-align: center;
+#order-form {
+    display: inline-block;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-#admin-table-section {
+#order-form input {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+}
+
+#order-form button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#order-form button[type="button"] {
+    background-color: #f44336;
+}
+
+#order-table-section {
     margin-top: 20px;
     text-align: center;
 }
