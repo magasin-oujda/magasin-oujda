@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function showOrderForm(productName) {
         const formContainer = document.getElementById("order-form-container");
         const productNameField = document.getElementById("product-name");
+        // Rellenar el nombre del producto en el formulario
         productNameField.value = productName;
         formContainer.classList.remove("hidden");
     }
