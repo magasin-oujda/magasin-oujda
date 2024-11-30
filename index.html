@@ -1,62 +1,143 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda de Camisetas</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Tienda de Camisetas de Fútbol</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .product {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+        }
+        .product img {
+            max-width: 150px;
+            margin-right: 1rem;
+        }
+        .product-info {
+            flex-grow: 1;
+        }
+        .product button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .product button:hover {
+            background-color: #218838;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #333;
+            color: #fff;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        footer button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        footer button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Tienda de Camisetas</h1>
-    <div id="product-list">
-        <!-- Productos -->
+    <header>
+        <h1>Tienda de Camisetas de Fútbol</h1>
+    </header>
+    <div class="container">
+        <!-- Producto de ejemplo -->
         <div class="product">
-            <img src="madrid.png" alt="Camiseta 1">
-            <p>Nombre de la Camiseta 1</p>
-            <p>Precio: 20€</p>
-            <button onclick="openOrderForm('Camiseta 1', 20)">اطلب الآن</button>
+            <img src="https://via.placeholder.com/150" alt="Camiseta 1">
+            <div class="product-info">
+                <h2>Camiseta Equipo A</h2>
+                <p>Precio: $50</p>
+            </div>
+            <button onclick="addToCart('Camiseta Equipo A', 50)">Agregar al carrito</button>
         </div>
+
         <div class="product">
-            <img src="barca.png" alt="Camiseta 2">
-            <p>Nombre de la Camiseta 2</p>
-            <p>Precio: 25€</p>
-            <button onclick="openOrderForm('Camiseta 2', 25)">اطلب الآن</button>
+            <img src="https://via.placeholder.com/150" alt="Camiseta 2">
+            <div class="product-info">
+                <h2>Camiseta Equipo B</h2>
+                <p>Precio: $60</p>
+            </div>
+            <button onclick="addToCart('Camiseta Equipo B', 60)">Agregar al carrito</button>
         </div>
-    </div>
 
-    <div id="order-form" style="display:none;">
-        <h2>Realizar Pedido</h2>
-        <form onsubmit="submitOrder(event)">
-            <input type="text" id="name" placeholder="Nombre" required>
-            <input type="text" id="address" placeholder="Dirección" required>
-            <input type="text" id="phone" placeholder="Teléfono" required>
-            <input type="hidden" id="product">
-            <button type="submit">Enviar Pedido</button>
-        </form>
+        <!-- Botón para descargar los pedidos -->
+        <button onclick="downloadOrder()">Descargar Pedidos</button>
     </div>
+    <footer>
+        <p>&copy; 2024 Tienda de Camisetas de Fútbol</p>
+        <button onclick="goToAdmin()">Administrador</button>
+    </footer>
 
-    <button id="admin-button" onclick="showAdminForm()">Acceso Administrativo</button>
-    <div id="admin-form" style="display:none;">
-        <input type="password" id="admin-password" placeholder="Contraseña">
-        <button onclick="validateAdmin()">Acceder</button>
-    </div>
-    <div id="order-table" style="display:none;">
-        <h2>Pedidos</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Producto</th>
-                </tr>
-            </thead>
-            <tbody id="orders">
-                <!-- Pedidos serán añadidos aquí -->
-            </tbody>
-        </table>
-    </div>
+    <script>
+        // Función para agregar productos al carrito
+        function addToCart(product, price) {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const order = {
+                id: orders.length + 1,
+                product: product,
+                quantity: 1, // Por ahora, asignamos una cantidad fija
+                price: price
+            };
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            alert(`${product} agregado al carrito`);
+        }
 
-    <script type="module" src="script.js"></script>
+        // Función para redirigir al administrador
+        function goToAdmin() {
+            const password = prompt("Introduce la contraseña de administrador:");
+            if (password === "admin123") {
+                alert("Acceso concedido. Mostrando los pedidos...");
+                window.location.href = "admin.html"; // Redirige a la página de administración
+            } else {
+                alert("Contraseña incorrecta.");
+            }
+        }
+
+        // Función para descargar el archivo JSON con los pedidos
+        function downloadOrder() {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const blob = new Blob([JSON.stringify(orders, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'pedidos.json';
+            link.click();
+        }
+    </script>
 </body>
 </html>
