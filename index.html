@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسوق قمصان كرة القدم</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>مرحباً بكم في متجر قمصان كرة القدم</h1>
+    </header>
+
+    <section class="products">
+        <!-- Camiseta 1 -->
+        <div class="product" data-name="Camiseta Barcelona" data-price="100">
+            <img src="barca.png" alt="Camiseta Barcelona">
+            <h3>Camiseta Barcelona</h3>
+            <p>السعر: 100 درهم</p>
+            <button class="order-button">اطلب الآن</button>
+        </div>
+
+        <!-- Camiseta 2 -->
+        <div class="product" data-name="Camiseta Real Madrid" data-price="120">
+            <img src="madrid.png" alt="Camiseta Real Madrid">
+            <h3>Camiseta Real Madrid</h3>
+            <p>السعر: 120 درهم</p>
+            <button class="order-button">اطلب الآن</button>
+        </div>
+
+        <!-- Camiseta 3 -->
+        <div class="product" data-name="Camiseta PSG" data-price="110">
+            <img src="psg.png" alt="Camiseta PSG">
+            <h3>Camiseta PSG</h3>
+            <p>السعر: 110 درهم</p>
+            <button class="order-button">اطلب الآن</button>
+        </div>
+    </section>
+
+    <!-- Formulario para realizar pedidos -->
+    <div id="order-form-container" class="hidden">
+        <form id="order-form">
+            <h2>إكمال الطلب</h2>
+            <label for="customer-name">الاسم:</label>
+            <input type="text" id="customer-name" required>
+            <label for="customer-address">العنوان:</label>
+            <input type="text" id="customer-address" required>
+            <label for="customer-phone">رقم الهاتف:</label>
+            <input type="text" id="customer-phone" required>
+            <div class="form-buttons">
+                <button type="button" id="submit-order">إرسال الطلب</button>
+                <button type="button" id="close-form">إغلاق</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla de pedidos oculta -->
+    <section id="order-table-section" class="hidden">
+        <h2>الطلبات</h2>
+        <table id="order-table">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>العنوان</th>
+                    <th>رقم الهاتف</th>
+                    <th>المنتج</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los pedidos aparecerán aquí -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Botón para mostrar la tabla -->
+    <div class="admin-button-container">
+        <button id="admin-access-button">الوصول كمسؤول</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
