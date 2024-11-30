@@ -1,69 +1,59 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda de Camisetas</title>
+    <title>تسوق قمصان كرة القدم</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Tienda de Camisetas</h1>
-    <div id="product-list">
-        <!-- Productos -->
-        <div class="product">
-            <img src="madrid.png" alt="Camiseta 1">
-            <p>Camiseta madrid </p>
-            <p>Precio: 20€</p>
-            <button onclick="openOrderForm('Camiseta 1', 20)">اطلب الآن</button>
-        </div>
-        <div class="product">
-            <img src="barca.png" alt="Camiseta 2">
-            <p>Camiseta barca</p>
-            <p>Precio: 25€</p>
-            <button onclick="openOrderForm('Camiseta 2', 25)">اطلب الآن</button>
-        </div>
-        <div class="product">
-            <img src="psg.png" alt="Camiseta 2">
-            <p>Camiseta psg</p>
-            <p>Precio: 25€</p>
-            <button onclick="openOrderForm('Camiseta 2', 25)">اطلب الآن</button>
-        </div>
-        <!-- Añade más productos según sea necesario -->
-    </div>
+    <header>
+        <h1>مرحباً بكم في متجر قمصان كرة القدم</h1>
+    </header>
 
-    <div id="order-form" style="display:none;">
-        <h2>Realizar Pedido</h2>
-        <form onsubmit="submitOrder(event)">
-            <input type="text" id="name" placeholder="Nombre" required>
-            <input type="text" id="address" placeholder="Dirección" required>
-            <input type="text" id="phone" placeholder="Teléfono" required>
-            <input type="hidden" id="product">
-            <input type="hidden" id="price">
-            <button type="submit">Enviar Pedido</button>
+    <section class="products">
+        <!-- Camiseta 1 -->
+        <div class="product" data-name="Camiseta Barcelona" data-price="100">
+            <img src="barca.png" alt="Camiseta Barcelona">
+            <h3>Camiseta Barcelona</h3>
+            <p>السعر: 100 درهم</p>
+            <button class="order-button">اطلب الآن</button>
+        </div>
+
+        <!-- Camiseta 2 -->
+        <div class="product" data-name="Camiseta Real Madrid" data-price="120">
+            <img src="madrid.png" alt="Camiseta Real Madrid">
+            <h3>Camiseta Real Madrid</h3>
+            <p>السعر: 120 درهم</p>
+            <button class="order-button">اطلب الآن</button>
+        </div>
+
+        <!-- Camiseta 3 -->
+        <div class="product" data-name="Camiseta PSG" data-price="110">
+            <img src="psg.png" alt="Camiseta PSG">
+            <h3>Camiseta PSG</h3>
+            <p>السعر: 110 درهم</p>
+            <button class="order-button">اطلب الآن</button>
+        </div>
+    </section>
+
+    <div id="order-form-container" class="hidden">
+        <form id="order-form">
+            <h2>إكمال الطلب</h2>
+            <label for="customer-name">الاسم:</label>
+            <input type="text" id="customer-name" required>
+            <label for="customer-address">العنوان:</label>
+            <input type="text" id="customer-address" required>
+            <label for="customer-phone">رقم الهاتف:</label>
+            <input type="tel" id="customer-phone" required>
+            <button type="button" id="submit-order">إرسال الطلب</button>
+            <button type="button" id="close-form">إغلاق</button>
         </form>
     </div>
 
-    <button id="admin-button" onclick="showAdminForm()">Acceso Administrativo</button>
-    <div id="admin-form" style="display:none;">
-        <input type="password" id="admin-password" placeholder="Contraseña">
-        <button onclick="validateAdmin()">Acceder</button>
-    </div>
-    <div id="order-table" style="display:none;">
-        <h2>Pedidos</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Producto</th>
-                    <th>Precio</th>
-                </tr>
-            </thead>
-            <tbody id="orders">
-                <!-- Pedidos serán añadidos aquí -->
-            </tbody>
-        </table>
+    <div class="admin-access">
+        <button id="admin-button">الوصول الإداري</button>
+        <input type="password" id="admin-code" placeholder="أدخل الكود">
     </div>
 
     <script src="script.js"></script>
