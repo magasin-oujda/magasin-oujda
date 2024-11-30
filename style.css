@@ -12,65 +12,69 @@ header {
     padding: 20px;
 }
 
-section {
-    margin: 20px;
-    padding: 20px;
+.products {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.product {
+    text-align: center;
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-input {
-    width: 100%;
     padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 200px;
 }
 
-button {
+.order-button {
     background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
+    padding: 10px;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #45a049;
+#order-form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    margin: 0 auto;
+    display: none;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+.hidden {
+    display: none;
+}
+
+.admin-button-container {
+    text-align: center;
     margin-top: 20px;
 }
 
-th, td {
-    padding: 12px;
+#admin-login {
+    margin-top: 20px;
     text-align: center;
 }
 
-th {
-    background-color: #4CAF50;
-    color: white;
+#order-table-section {
+    margin-top: 20px;
+    text-align: center;
 }
 
-td {
-    background-color: #f9f9f9;
+#order-table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
 }
 
-tr:nth-child(even) {
-    background-color: #f2f2f2;
+#order-table th, #order-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
 }
 
-tr:hover {
-    background-color: #ddd;
+#order-table th {
+    background-color: #f4f4f4;
 }
