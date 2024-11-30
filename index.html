@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,169 +37,11 @@
         </div>
     </section>
 
-    <!-- Formulario de pedido -->
-    <div id="order-form-container" class="hidden">
-        <form id="order-form">
-            <h2>إكمال الطلب</h2>
-            <label for="customer-name">الاسم:</label>
-            <input type="text" id="customer-name" required>
-            <label for="customer-address">العنوان:</label>
-            <input type="text" id="customer-address" required>
-            <label for="customer-phone">رقم الهاتف:</label>
-            <input type="tel" id="customer-phone" required>
-            <button type="button" id="submit-order">إرسال الطلب</button>
-            <button type="button" id="close-form">إغلاق</button>
-        </form>
-    </div>
-
-    <!-- Tabla de pedidos -->
-    <section id="order-table-section" class="hidden">
-        <h2>الطلبات</h2>
-        <table id="order-table">
-            <thead>
-                <tr>
-                    <th>الاسم</th>
-                    <th>العنوان</th>
-                    <th>رقم الهاتف</th>
-                    <th>المنتج</th>
-                    <th>الإجراء</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </section>
-
     <!-- Botón para acceso administrativo -->
     <div class="admin-button-container">
         <button id="admin-access-button">عرض الطلبات (الإداري فقط)</button>
-        <div id="admin-login">
-            <label for="admin-code">رمز المدير:</label>
-            <input type="password" id="admin-code">
-            <button id="login-button">دخول</button>
-        </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-
-        // Configuración de Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAviLwnV_eQ7yU6qP3cAbMTgx7G3sQBwDg",
-            authDomain: "tienda-camisetas-bfaa6.firebaseapp.com",
-            databaseURL: "https://tienda-camisetas-bfaa6-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "tienda-camisetas-bfaa6",
-            storageBucket: "tienda-camisetas-bfaa6.firebasestorage.app",
-            messagingSenderId: "287261715035",
-            appId: "1:287261715035:web:784d4000cc211f72cc6d7e",
-            measurementId: "G-VD308N9GE9"
-        };
-
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase();
-
-        // Mostrar los productos
-        const products = [
-            { name: "Camiseta Barcelona", price: 100 },
-            { name: "Camiseta Real Madrid", price: 120 },
-            { name: "Camiseta PSG", price: 110 }
-        ];
-
-        const productList = document.querySelector(".products");
-        products.forEach(product => {
-            const productDiv = document.createElement("div");
-            productDiv.classList.add("product");
-            productDiv.innerHTML = `
-                <img src="${product.name.toLowerCase().replace(" ", "")}.png" alt="${product.name}">
-                <h3>${product.name}</h3>
-                <p>السعر: ${product.price} درهم</p>
-                <button class="order-button">اطلب الآن</button>
-            `;
-            productList.appendChild(productDiv);
-        });
-
-        // Mostrar formulario de pedido
-        let currentProduct = null;
-        document.querySelectorAll(".order-button").forEach(button => {
-            button.addEventListener("click", function() {
-                currentProduct = this.parentElement;
-                document.getElementById("order-form-container").classList.remove("hidden");
-            });
-        });
-
-        // Enviar pedido
-        document.getElementById("submit-order").addEventListener("click", function() {
-            const name = document.getElementById("customer-name").value;
-            const address = document.getElementById("customer-address").value;
-            const phone = document.getElementById("customer-phone").value;
-            const productName = currentProduct.querySelector("h3").textContent;
-            const price = currentProduct.querySelector("p").textContent.split(" ")[1];
-
-            const orderId = new Date().getTime();
-            const orderRef = ref(db, 'orders/' + orderId);
-            set(orderRef, {
-                name: name,
-                address: address,
-                phone: phone,
-                product: productName,
-                price: price
-            });
-
-            alert("تم إرسال الطلب!");
-            document.getElementById("order-form-container").classList.add("hidden");
-        });
-
-        // Cerrar formulario
-        document.getElementById("close-form").addEventListener("click", function() {
-            document.getElementById("order-form-container").classList.add("hidden");
-        });
-
-        // Mostrar pedidos (solo admin)
-        document.getElementById("login-button").addEventListener("click", function() {
-            const adminCode = document.getElementById("admin-code").value;
-
-            if (adminCode === "admin123") {
-                document.getElementById("order-table-section").classList.remove("hidden");
-                getOrders();
-            } else {
-                alert("رمز المدير غير صحيح");
-            }
-        });
-
-        // Obtener pedidos de Firebase
-        function getOrders() {
-            const ordersRef = ref(db, 'orders');
-            get(ordersRef).then(snapshot => {
-                if (snapshot.exists()) {
-                    const orders = snapshot.val();
-                    displayOrders(orders);
-                } else {
-                    console.log("لا توجد طلبات");
-                }
-            }).catch(error => {
-                console.error(error);
-            });
-        }
-
-        // Mostrar pedidos en la tabla
-        function displayOrders(orders) {
-            const tableBody = document.querySelector("#order-table tbody");
-            tableBody.innerHTML = "";
-            for (const id in orders) {
-                const order = orders[id];
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${order.name}</td>
-                    <td>${order.address}</td>
-                    <td>${order.phone}</td>
-                    <td>${order.product}</td>
-                    <td><button>حذف</button></td>
-                `;
-                tableBody.appendChild(row);
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
