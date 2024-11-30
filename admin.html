@@ -1,28 +1,104 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عرض الطلبات</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Administrador de Pedidos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background-color: #fff;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #333;
+            color: #fff;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h2>عرض الطلبات</h2>
-    <table id="order-table">
-        <thead>
-            <tr>
-                <th>الاسم</th>
-                <th>العنوان</th>
-                <th>رقم الهاتف</th>
-                <th>المنتج</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Aquí se llenarán los pedidos desde Firebase -->
-        </tbody>
-    </table>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="admin.js"></script>
+    <header>
+        <h1>Administrador de Pedidos</h1>
+    </header>
+    <div class="container">
+        <h2>Lista de Pedidos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID de Pedido</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+                <!-- Los pedidos se mostrarán aquí -->
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <p>&copy; 2024 Tienda de Camisetas de Fútbol</p>
+    </footer>
+
+    <script>
+        // Función para cargar los pedidos desde localStorage
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const ordersTableBody = document.getElementById('ordersTableBody');
+
+            // Limpiar tabla antes de cargar nuevos pedidos
+            ordersTableBody.innerHTML = '';
+
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.product}</td>
+                    <td>${order.quantity}</td>
+                    <td>$${order.price}</td>
+                    <td>$${(order.quantity * order.price).toFixed(2)}</td>
+                `;
+                ordersTableBody.appendChild(row);
+            });
+        }
+
+        // Llamar a la función para cargar los pedidos al cargar la página
+        loadOrders();
+    </script>
 </body>
 </html>
