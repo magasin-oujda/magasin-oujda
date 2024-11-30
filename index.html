@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda de Camisetas de Fútbol</title>
     <style>
+        /* Estilos básicos para la página */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -121,9 +122,11 @@
         <button onclick="goToAdmin()">Administrador</button>
     </footer>
 
-    <script>
+    <script type="module">
         // Agregar productos al carrito y guardarlos en localStorage
         function addToCart(product, price) {
+            console.log('Agregando al carrito: ', product, price); // Debugging
+
             const order = {
                 product: product,
                 id: Date.now(),  // Usamos la fecha como ID único
@@ -133,12 +136,15 @@
             let orders = JSON.parse(localStorage.getItem('orders')) || [];
             orders.push(order);
             localStorage.setItem('orders', JSON.stringify(orders));
-            alert('Producto agregado al carrito');
+            
+            console.log('Pedidos guardados: ', orders); // Verificar que los pedidos están guardados
             loadOrders();  // Cargar los pedidos nuevamente
         }
 
         // Cargar los pedidos almacenados en localStorage
         function loadOrders() {
+            console.log('Cargando pedidos...'); // Debugging
+
             const orders = JSON.parse(localStorage.getItem('orders')) || [];
             const tableBody = document.getElementById('ordersTableBody');
             tableBody.innerHTML = '';  // Limpiar la tabla antes de agregar nuevas filas
@@ -153,6 +159,8 @@
                 `;
                 tableBody.appendChild(row);
             });
+
+            console.log('Pedidos cargados: ', orders); // Verificar que los pedidos se muestran
         }
 
         window.onload = loadOrders;  // Cargar los pedidos cuando se carga la página
@@ -163,6 +171,7 @@
             if (password === "admin123") {
                 alert("Acceso concedido. Mostrando los pedidos...");
                 // Aquí se redirigiría a una página de administración o se mostrarían los pedidos
+                window.location.href = 'admin.html'; // Redirige al panel de administración
             } else {
                 alert("Contraseña incorrecta.");
             }
