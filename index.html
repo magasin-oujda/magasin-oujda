@@ -1,80 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسوق قمصان كرة القدم</title>
+    <title>Tienda Camisetas</title>
     <link rel="stylesheet" href="style.css">
+    <script type="module">
+        // Importar las funciones necesarias de Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAviLwnV_eQ7yU6qP3cAbMTgx7G3sQBwDg",
+            authDomain: "tienda-camisetas-bfaa6.firebaseapp.com",
+            databaseURL: "https://tienda-camisetas-bfaa6-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "tienda-camisetas-bfaa6",
+            storageBucket: "tienda-camisetas-bfaa6.firebasestorage.app",
+            messagingSenderId: "287261715035",
+            appId: "1:287261715035:web:784d4000cc211f72cc6d7e",
+            measurementId: "G-VD308N9GE9"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+
+        // Función para guardar el pedido en la base de datos
+        function saveOrder(order) {
+            const orderRef = ref(db, 'orders/' + order.id);
+            set(orderRef, {
+                customerName: order.name,
+                customerAddress: order.address,
+                product: order.product,
+                price: order.price
+            });
+        }
+
+        // Enviar el pedido cuando el formulario sea enviado
+        document.getElementById("order-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const address = document.getElementById("address").value;
+            const product = document.getElementById("product").value;
+            const price = document.getElementById("price").value;
+
+            // Generar un ID único para el pedido
+            const orderId = new Date().getTime();
+
+            // Guardar el pedido en Firebase
+            saveOrder({
+                id: orderId,
+                name: name,
+                address: address,
+                product: product,
+                price: price
+            });
+
+            alert("¡Pedido realizado exitosamente!");
+        });
+    </script>
 </head>
 <body>
+
     <header>
-        <h1>مرحباً بكم في متجر قمصان كرة القدم</h1>
+        <h1>Bienvenido a la Tienda de Camisetas</h1>
     </header>
 
     <section class="products">
-        <!-- Camiseta 1 -->
+        <!-- Producto 1 -->
         <div class="product" data-name="Camiseta Barcelona" data-price="100">
             <img src="barca.png" alt="Camiseta Barcelona">
             <h3>Camiseta Barcelona</h3>
-            <p>السعر: 100 درهم</p>
-            <button class="order-button">اطلب الآن</button>
+            <p>Precio: 100 MAD</p>
+            <button class="order-button" onclick="showOrderForm('Camiseta Barcelona', 100)">Pedir Ahora</button>
         </div>
 
-        <!-- Camiseta 2 -->
+        <!-- Producto 2 -->
         <div class="product" data-name="Camiseta Real Madrid" data-price="120">
             <img src="madrid.png" alt="Camiseta Real Madrid">
             <h3>Camiseta Real Madrid</h3>
-            <p>السعر: 120 درهم</p>
-            <button class="order-button">اطلب الآن</button>
+            <p>Precio: 120 MAD</p>
+            <button class="order-button" onclick="showOrderForm('Camiseta Real Madrid', 120)">Pedir Ahora</button>
         </div>
 
-        <!-- Camiseta 3 -->
+        <!-- Producto 3 -->
         <div class="product" data-name="Camiseta PSG" data-price="110">
             <img src="psg.png" alt="Camiseta PSG">
             <h3>Camiseta PSG</h3>
-            <p>السعر: 110 درهم</p>
-            <button class="order-button">اطلب الآن</button>
+            <p>Precio: 110 MAD</p>
+            <button class="order-button" onclick="showOrderForm('Camiseta PSG', 110)">Pedir Ahora</button>
         </div>
     </section>
 
-    <!-- Formulario de pedido -->
-    <div id="order-form-container" class="hidden">
+    <section id="order-form-container" class="hidden">
+        <h2>Realiza tu Pedido</h2>
         <form id="order-form">
-            <h2>إكمال الطلب</h2>
-            <label for="customer-name">الاسم:</label>
-            <input type="text" id="customer-name" required>
-            <label for="customer-address">العنوان:</label>
-            <input type="text" id="customer-address" required>
-            <label for="customer-phone">رقم الهاتف:</label>
-            <input type="tel" id="customer-phone" required>
-            <button type="button" id="submit-order">إرسال الطلب</button>
-            <button type="button" id="close-form">إغلاق</button>
+            <input type="text" id="name" placeholder="Tu Nombre" required>
+            <input type="text" id="address" placeholder="Tu Dirección" required>
+            <input type="hidden" id="product">
+            <input type="hidden" id="price">
+            <button type="submit">Confirmar Pedido</button>
         </form>
-    </div>
-
-    <!-- Tabla de pedidos -->
-    <section id="order-table-section" class="hidden">
-        <h2>الطلبات</h2>
-        <table id="order-table">
-            <thead>
-                <tr>
-                    <th>الاسم</th>
-                    <th>العنوان</th>
-                    <th>رقم الهاتف</th>
-                    <th>المنتج</th>
-                    <th>الإجراء</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
     </section>
 
-    <!-- Botón para acceso administrativo -->
-    <div class="admin-button-container">
-        <button id="admin-access-button">عرض الطلبات (الإداري فقط)</button>
-    </div>
-
-    <script src="script.js"></script>
+    <script>
+        function showOrderForm(product, price) {
+            document.getElementById('product').value = product;
+            document.getElementById('price').value = price;
+            document.getElementById('order-form-container').classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>
