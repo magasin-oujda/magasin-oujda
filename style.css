@@ -33,22 +33,16 @@ header {
     border: none;
     padding: 10px;
     cursor: pointer;
-}
-
-#order-form-container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    width: 300px;
-    margin: 0 auto;
-    display: none;
-}
-
-.hidden {
-    display: none;
+    margin-top: 10px;
 }
 
 .admin-button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#admin-access-section {
+    display: none;
     text-align: center;
     margin-top: 20px;
 }
@@ -58,7 +52,7 @@ header {
     text-align: center;
 }
 
-#order-table-section {
+#admin-table-section {
     margin-top: 20px;
     text-align: center;
 }
