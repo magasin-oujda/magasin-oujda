@@ -37,6 +37,21 @@
         </div>
     </section>
 
+    <!-- Formulario de pedido -->
+    <div id="order-form-container" class="hidden">
+        <form id="order-form">
+            <h2>إكمال الطلب</h2>
+            <label for="customer-name">الاسم:</label>
+            <input type="text" id="customer-name" required>
+            <label for="customer-address">العنوان:</label>
+            <input type="text" id="customer-address" required>
+            <label for="customer-phone">رقم الهاتف:</label>
+            <input type="tel" id="customer-phone" required>
+            <button type="submit">إرسال الطلب</button>
+            <button type="button" id="close-form">إغلاق</button>
+        </form>
+    </div>
+
     <!-- Botón para acceso administrativo -->
     <div class="admin-button-container">
         <button id="admin-access-button">عرض الطلبات (الإداري فقط)</button>
