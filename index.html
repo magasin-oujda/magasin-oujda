@@ -1,43 +1,84 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda Camisetas</title>
+    <title>تسوق قمصان كرة القدم</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Tienda de Camisetas</h1>
+        <h1>مرحباً بكم في متجر قمصان كرة القدم</h1>
     </header>
 
-    <!-- Formulario para realizar un pedido -->
-    <section id="order-form-section">
-        <h2>Realiza tu pedido</h2>
-        <form id="order-form">
-            <label for="name">Nombre:</label>
-            <input type="text" id="name" required>
+    <section class="products">
+        <!-- Camiseta 1 -->
+        <div class="product" data-name="Camiseta Barcelona" data-price="100">
+            <img src="barca.png" alt="Camiseta Barcelona">
+            <h3>Camiseta Barcelona</h3>
+            <p>السعر: 100 درهم</p>
+            <button class="order-button">اطلب الآن</button>
+        </div>
 
-            <label for="address">Dirección:</label>
-            <input type="text" id="address" required>
+        <!-- Camiseta 2 -->
+        <div class="product" data-name="Camiseta Real Madrid" data-price="120">
+            <img src="madrid.png" alt="Camiseta Real Madrid">
+            <h3>Camiseta Real Madrid</h3>
+            <p>السعر: 120 درهم</p>
+            <button class="order-button">اطلب الآن</button>
+        </div>
 
-            <label for="product">Producto:</label>
-            <input type="text" id="product" required>
-
-            <label for="price">Precio:</label>
-            <input type="number" id="price" required>
-
-            <button type="submit">Realizar Pedido</button>
-        </form>
+        <!-- Camiseta 3 -->
+        <div class="product" data-name="Camiseta PSG" data-price="110">
+            <img src="psg.png" alt="Camiseta PSG">
+            <h3>Camiseta PSG</h3>
+            <p>السعر: 110 درهم</p>
+            <button class="order-button">اطلب الآن</button>
+        </div>
     </section>
 
-    <!-- Tabla para mostrar los pedidos -->
-    <section id="orders-section">
-        <h2>Pedidos Realizados</h2>
-        <table id="orders-table">
-            <!-- Los pedidos se agregarán aquí -->
+    <!-- Formulario de pedido -->
+    <div id="order-form-container" class="hidden">
+        <form id="order-form">
+            <h2>إكمال الطلب</h2>
+            <label for="customer-name">الاسم:</label>
+            <input type="text" id="customer-name" required>
+            <label for="customer-address">العنوان:</label>
+            <input type="text" id="customer-address" required>
+            <label for="customer-phone">رقم الهاتف:</label>
+            <input type="tel" id="customer-phone" required>
+            <button type="button" id="submit-order">إرسال الطلب</button>
+            <button type="button" id="close-form">إغلاق</button>
+        </form>
+    </div>
+
+    <!-- Tabla de pedidos -->
+    <section id="order-table-section" class="hidden">
+        <h2>الطلبات</h2>
+        <table id="order-table">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>العنوان</th>
+                    <th>رقم الهاتف</th>
+                    <th>المنتج</th>
+                    <th>الإجراء</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
         </table>
     </section>
+
+    <!-- Botón para acceso administrativo -->
+    <div class="admin-button-container">
+        <button id="admin-access-button">عرض الطلبات (الإداري فقط)</button>
+        <div id="admin-login">
+            <label for="admin-code">رمز المدير:</label>
+            <input type="password" id="admin-code">
+            <button id="login-button">دخول</button>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
@@ -59,91 +100,106 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase();
 
-        // Función para guardar un pedido en Firebase
-        function saveOrder(order) {
-            const orderRef = ref(db, 'orders/' + order.id);
-            set(orderRef, {
-                customerName: order.name,
-                customerAddress: order.address,
-                product: order.product,
-                price: order.price
-            });
-        }
+        // Mostrar los productos
+        const products = [
+            { name: "Camiseta Barcelona", price: 100 },
+            { name: "Camiseta Real Madrid", price: 120 },
+            { name: "Camiseta PSG", price: 110 }
+        ];
 
-        // Función para obtener todos los pedidos desde Firebase
+        const productList = document.querySelector(".products");
+        products.forEach(product => {
+            const productDiv = document.createElement("div");
+            productDiv.classList.add("product");
+            productDiv.innerHTML = `
+                <img src="${product.name.toLowerCase().replace(" ", "")}.png" alt="${product.name}">
+                <h3>${product.name}</h3>
+                <p>السعر: ${product.price} درهم</p>
+                <button class="order-button">اطلب الآن</button>
+            `;
+            productList.appendChild(productDiv);
+        });
+
+        // Mostrar formulario de pedido
+        let currentProduct = null;
+        document.querySelectorAll(".order-button").forEach(button => {
+            button.addEventListener("click", function() {
+                currentProduct = this.parentElement;
+                document.getElementById("order-form-container").classList.remove("hidden");
+            });
+        });
+
+        // Enviar pedido
+        document.getElementById("submit-order").addEventListener("click", function() {
+            const name = document.getElementById("customer-name").value;
+            const address = document.getElementById("customer-address").value;
+            const phone = document.getElementById("customer-phone").value;
+            const productName = currentProduct.querySelector("h3").textContent;
+            const price = currentProduct.querySelector("p").textContent.split(" ")[1];
+
+            const orderId = new Date().getTime();
+            const orderRef = ref(db, 'orders/' + orderId);
+            set(orderRef, {
+                name: name,
+                address: address,
+                phone: phone,
+                product: productName,
+                price: price
+            });
+
+            alert("تم إرسال الطلب!");
+            document.getElementById("order-form-container").classList.add("hidden");
+        });
+
+        // Cerrar formulario
+        document.getElementById("close-form").addEventListener("click", function() {
+            document.getElementById("order-form-container").classList.add("hidden");
+        });
+
+        // Mostrar pedidos (solo admin)
+        document.getElementById("login-button").addEventListener("click", function() {
+            const adminCode = document.getElementById("admin-code").value;
+
+            if (adminCode === "admin123") {
+                document.getElementById("order-table-section").classList.remove("hidden");
+                getOrders();
+            } else {
+                alert("رمز المدير غير صحيح");
+            }
+        });
+
+        // Obtener pedidos de Firebase
         function getOrders() {
             const ordersRef = ref(db, 'orders');
-            get(ordersRef).then((snapshot) => {
+            get(ordersRef).then(snapshot => {
                 if (snapshot.exists()) {
                     const orders = snapshot.val();
                     displayOrders(orders);
                 } else {
-                    console.log("No hay pedidos");
+                    console.log("لا توجد طلبات");
                 }
-            }).catch((error) => {
+            }).catch(error => {
                 console.error(error);
             });
         }
 
-        // Función para mostrar los pedidos en una tabla
+        // Mostrar pedidos en la tabla
         function displayOrders(orders) {
-            const ordersTable = document.getElementById("orders-table");
-            ordersTable.innerHTML = ""; // Limpiar la tabla
-
-            // Agregar los encabezados de la tabla
-            const headerRow = document.createElement("tr");
-            headerRow.innerHTML = `
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Dirección</th>
-                <th>Producto</th>
-                <th>Precio</th>
-            `;
-            ordersTable.appendChild(headerRow);
-
-            // Recorrer los pedidos y agregarlos a la tabla
-            for (let orderId in orders) {
-                const order = orders[orderId];
+            const tableBody = document.querySelector("#order-table tbody");
+            tableBody.innerHTML = "";
+            for (const id in orders) {
+                const order = orders[id];
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${orderId}</td>
-                    <td>${order.customerName}</td>
-                    <td>${order.customerAddress}</td>
+                    <td>${order.name}</td>
+                    <td>${order.address}</td>
+                    <td>${order.phone}</td>
                     <td>${order.product}</td>
-                    <td>${order.price}</td>
+                    <td><button>حذف</button></td>
                 `;
-                ordersTable.appendChild(row);
+                tableBody.appendChild(row);
             }
         }
-
-        // Enviar el pedido cuando se complete el formulario
-        document.getElementById("order-form").addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            const name = document.getElementById("name").value;
-            const address = document.getElementById("address").value;
-            const product = document.getElementById("product").value;
-            const price = document.getElementById("price").value;
-
-            // Generar un ID único para el pedido
-            const orderId = new Date().getTime();
-
-            // Guardar el pedido en Firebase
-            saveOrder({
-                id: orderId,
-                name: name,
-                address: address,
-                product: product,
-                price: price
-            });
-
-            alert("¡Pedido realizado exitosamente!");
-        });
-
-        // Llamar a la función para obtener los pedidos cuando se carga la página
-        window.onload = function() {
-            getOrders();
-        };
     </script>
 </body>
 </html>
