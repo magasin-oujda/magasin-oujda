@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda de Camisetas de Fútbol</title>
     <style>
-        /* Estilos básicos para la página */
+        /* Estilos básicos */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -70,6 +70,22 @@
         footer button:hover {
             background-color: #0056b3;
         }
+        /* Estilo para la tabla de pedidos */
+        #ordersTableContainer {
+            display: none;
+            margin-top: 2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -95,12 +111,10 @@
             </div>
             <button onclick="addToCart('Camiseta Equipo B', 60)">Agregar al carrito</button>
         </div>
-
-        <!-- Más productos aquí -->
     </div>
-    
-    <!-- Tabla de pedidos -->
-    <div class="container">
+
+    <!-- Tabla de pedidos, inicialmente oculta -->
+    <div id="ordersTableContainer" class="container">
         <h2>Pedidos Realizados</h2>
         <table>
             <thead>
@@ -138,7 +152,6 @@
             localStorage.setItem('orders', JSON.stringify(orders));
             
             console.log('Pedidos guardados: ', orders); // Verificar que los pedidos están guardados
-            loadOrders();  // Cargar los pedidos nuevamente
         }
 
         // Cargar los pedidos almacenados en localStorage
@@ -163,15 +176,14 @@
             console.log('Pedidos cargados: ', orders); // Verificar que los pedidos se muestran
         }
 
-        window.onload = loadOrders;  // Cargar los pedidos cuando se carga la página
-
-        // Función de administrador (solo muestra un mensaje en este caso)
+        // Función de administrador que solicita la contraseña
         function goToAdmin() {
             const password = prompt("Introduce la contraseña de administrador:");
             if (password === "admin123") {
                 alert("Acceso concedido. Mostrando los pedidos...");
-                // Aquí se redirigiría a una página de administración o se mostrarían los pedidos
-                window.location.href = 'admin.html'; // Redirige al panel de administración
+                // Mostrar la tabla de pedidos
+                document.getElementById('ordersTableContainer').style.display = 'block';
+                loadOrders();  // Cargar y mostrar los pedidos
             } else {
                 alert("Contraseña incorrecta.");
             }
