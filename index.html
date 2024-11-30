@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسوق قمصان كرة القدم</title>
+    <title>Pedidos de Camisetas</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,23 +12,18 @@
     </header>
 
     <section class="products">
-        <!-- Camiseta 1 -->
         <div class="product" data-name="Camiseta Barcelona" data-price="100">
             <img src="barca.png" alt="Camiseta Barcelona">
             <h3>Camiseta Barcelona</h3>
             <p>السعر: 100 درهم</p>
             <button class="order-button">اطلب الآن</button>
         </div>
-
-        <!-- Camiseta 2 -->
         <div class="product" data-name="Camiseta Real Madrid" data-price="120">
             <img src="madrid.png" alt="Camiseta Real Madrid">
             <h3>Camiseta Real Madrid</h3>
             <p>السعر: 120 درهم</p>
             <button class="order-button">اطلب الآن</button>
         </div>
-
-        <!-- Camiseta 3 -->
         <div class="product" data-name="Camiseta PSG" data-price="110">
             <img src="psg.png" alt="Camiseta PSG">
             <h3>Camiseta PSG</h3>
@@ -37,7 +32,6 @@
         </div>
     </section>
 
-    <!-- Formulario de pedido -->
     <div id="order-form-container" class="hidden">
         <form id="order-form">
             <h2>إكمال الطلب</h2>
@@ -47,12 +41,11 @@
             <input type="text" id="customer-address" required>
             <label for="customer-phone">رقم الهاتف:</label>
             <input type="tel" id="customer-phone" required>
-            <button type="submit">إرسال الطلب</button>
+            <button type="button" id="submit-order">إرسال الطلب</button>
             <button type="button" id="close-form">إغلاق</button>
         </form>
     </div>
 
-    <!-- Botón para acceso administrativo -->
     <div class="admin-button-container">
         <button id="admin-access-button">عرض الطلبات (الإداري فقط)</button>
     </div>
