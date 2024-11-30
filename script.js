@@ -1,59 +1,69 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // Mostrar el formulario de pedido cuando se hace clic en "اطلب الآن"
-    const orderButtons = document.querySelectorAll('.order-button');
-    orderButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const productName = button.parentElement.dataset.name; // Obtener el nombre del producto
-            showOrderForm(productName);
+document.addEventListener("DOMContentLoaded", () => {
+    const orderFormContainer = document.getElementById("order-form-container");
+    const submitOrderButton = document.getElementById("submit-order");
+    const closeFormButton = document.getElementById("close-form");
+    const adminAccessButton = document.getElementById("admin-access-button");
+
+    let selectedProduct = null;
+
+    // Show order form when a product is clicked
+    document.querySelectorAll(".order-button").forEach(button => {
+        button.addEventListener("click", (event) => {
+            const productElement = event.target.closest(".product");
+            selectedProduct = {
+                name: productElement.getAttribute("data-name"),
+                price: productElement.getAttribute("data-price")
+            };
+            orderFormContainer.classList.remove("hidden");
         });
     });
 
-    // Mostrar el formulario de pedido
-    function showOrderForm(productName) {
-        const formContainer = document.getElementById("order-form-container");
-        const productNameField = document.getElementById("product-name");
-        // Rellenar el nombre del producto en el formulario
-        productNameField.value = productName;
-        formContainer.classList.remove("hidden");
-    }
-
-    // Cerrar el formulario
-    const closeButton = document.getElementById("close-form");
-    closeButton.addEventListener("click", function() {
-        document.getElementById("order-form-container").classList.add("hidden");
+    // Close the order form
+    closeFormButton.addEventListener("click", () => {
+        orderFormContainer.classList.add("hidden");
     });
 
-    // Enviar el formulario
-    const orderForm = document.getElementById("order-form");
-    orderForm.addEventListener("submit", function(e) {
-        e.preventDefault();
+    // Submit the order and save it to local storage
+    submitOrderButton.addEventListener("click", () => {
         const name = document.getElementById("customer-name").value;
         const address = document.getElementById("customer-address").value;
         const phone = document.getElementById("customer-phone").value;
-        const productName = document.getElementById("product-name").value; // Obtener el nombre del producto
 
-        // Enviar los datos a Firebase
-        submitOrderToFirebase(name, address, phone, productName);
+        if (name && address && phone && selectedProduct) {
+            const orders = JSON.parse(localStorage.getItem("orders")) || [];
+            orders.push({ name, address, phone, product: selectedProduct });
+            localStorage.setItem("orders", JSON.stringify(orders));
 
-        // Cerrar el formulario después de enviarlo
-        document.getElementById("order-form-container").classList.add("hidden");
+            alert("تم إرسال الطلب بنجاح!");
+            orderFormContainer.classList.add("hidden");
+        } else {
+            alert("يرجى ملء جميع الحقول.");
+        }
     });
 
-    // Función para enviar el pedido a Firebase
-    function submitOrderToFirebase(name, address, phone, productName) {
-        const db = firebase.database();
-        const ordersRef = db.ref('orders');
-        const newOrderRef = ordersRef.push(); // Crear un nuevo pedido
+    // Show orders for admin
+    adminAccessButton.addEventListener("click", () => {
+        const password = prompt("يرجى إدخال كلمة المرور:");
+        if (password === "admin123") {
+            const orders = JSON.parse(localStorage.getItem("orders")) || [];
+            if (orders.length === 0) {
+                alert("لا توجد طلبات.");
+                return;
+            }
 
-        newOrderRef.set({
-            name: name,
-            address: address,
-            phone: phone,
-            product: productName
-        }).then(() => {
-            alert("تم إرسال الطلب بنجاح!");
-        }).catch(error => {
-            alert("حدث خطأ عند إرسال الطلب");
-        });
-    }
+            let tableContent = "<table><tr><th>الاسم</th><th>العنوان</th><th>رقم الهاتف</th><th>المنتج</th></tr>";
+            orders.forEach(order => {
+                tableContent += `<tr><td>${order.name}</td><td>${order.address}</td><td>${order.phone}</td><td>${order.product.name} - ${order.product.price} درهم</td></tr>`;
+            });
+            tableContent += "</table>";
+
+            const newWindow = window.open();
+            newWindow.document.write("<html><head><title>طلبات</title></head><body>");
+            newWindow.document.write("<h2>الطلبات</h2>");
+            newWindow.document.write(tableContent);
+            newWindow.document.write("</body></html>");
+        } else {
+            alert("كلمة المرور غير صحيحة.");
+        }
+    });
 });
