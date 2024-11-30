@@ -1,56 +1,58 @@
-function openOrderForm(product, price) {
-    document.getElementById('order-form').style.display = 'block';
-    document.getElementById('product').value = product;
-    document.getElementById('price').value = price;
-}
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-function submitOrder(event) {
-    event.preventDefault();
-    const order = {
-        name: document.getElementById('name').value,
-        address: document.getElementById('address').value,
-        phone: document.getElementById('phone').value,
-        product: document.getElementById('product').value,
-        price: document.getElementById('price').value
-    };
-    saveOrder(order);
-    document.getElementById('order-form').reset();
-    document.getElementById('order-form').style.display = 'none';
-}
+const supabaseUrl = 'https://jduurjuxxddqknktrohc.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdXVyanV4eGRkcWtua3Ryb2hjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI5ODUxMDUsImV4cCI6MjA0ODU2MTEwNX0.lkW3IVjPolveNqiATaET5uYplCvK87SvRVLkeZUNp0M';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-function saveOrder(order) {
-    let orders = JSON.parse(localStorage.getItem('orders')) || [];
-    orders.push(order);
-    localStorage.setItem('orders', JSON.stringify(orders));
-}
+document.querySelectorAll('.order-button').forEach(button => {
+    button.addEventListener('click', (event) => {
+        const productElement = event.target.closest('.product');
+        const productName = productElement.dataset.name;
+        const productPrice = productElement.dataset.price;
 
-function showAdminForm() {
-    document.getElementById('admin-form').style.display = 'block';
-}
-
-function validateAdmin() {
-    const password = document.getElementById('admin-password').value;
-    if (password === 'admin123') {
-        showOrders();
-    } else {
-        alert('Contraseña incorrecta');
-    }
-}
-
-function showOrders() {
-    document.getElementById('order-table').style.display = 'block';
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    const ordersTable = document.getElementById('orders');
-    ordersTable.innerHTML = '';
-    orders.forEach(order => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${order.name}</td>
-            <td>${order.address}</td>
-            <td>${order.phone}</td>
-            <td>${order.product}</td>
-            <td>${order.price}</td>
-        `;
-        ordersTable.appendChild(row);
+        showOrderForm(productName, productPrice);
     });
+});
+
+function showOrderForm(productName, productPrice) {
+    const formContainer = document.getElementById('order-form-container');
+    formContainer.classList.remove('hidden');
+
+    const submitButton = document.getElementById('submit-order');
+    submitButton.onclick = async () => {
+        const name = document.getElementById('customer-name').value;
+        const address = document.getElementById('customer-address').value;
+        const phone = document.getElementById('customer-phone').value;
+
+        const { data, error } = await supabase.from('Pedidos').insert([{ name, address, phone, product: productName, price: productPrice }]);
+
+        if (error) {
+            console.error('Error al guardar el pedido:', error);
+        } else {
+            console.log('Pedido guardado:', data);
+        }
+        
+        formContainer.classList.add('hidden');
+    };
+
+    document.getElementById('close-form').onclick = () => {
+        formContainer.classList.add('hidden');
+    };
 }
+
+document.getElementById('admin-button').onclick = async () => {
+    const adminCode = document.getElementById('admin-code').value;
+
+    if (adminCode === 'admin123') {
+        const { data, error } = await supabase.from('Pedidos').select('*');
+
+        if (error) {
+            console.error('Error al obtener pedidos:', error);
+        } else {
+            console.log('Pedidos:', data);
+            alert('Pedidos cargados. Mira la consola para más detalles.');
+        }
+    } else {
+        alert('Código de administrador incorrecto.');
+    }
+};
