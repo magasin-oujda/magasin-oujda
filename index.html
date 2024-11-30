@@ -5,10 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda Camisetas</title>
     <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Tienda de Camisetas</h1>
+    </header>
+
+    <!-- Formulario para realizar un pedido -->
+    <section id="order-form-section">
+        <h2>Realiza tu pedido</h2>
+        <form id="order-form">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" required>
+
+            <label for="address">Dirección:</label>
+            <input type="text" id="address" required>
+
+            <label for="product">Producto:</label>
+            <input type="text" id="product" required>
+
+            <label for="price">Precio:</label>
+            <input type="number" id="price" required>
+
+            <button type="submit">Realizar Pedido</button>
+        </form>
+    </section>
+
+    <!-- Tabla para mostrar los pedidos -->
+    <section id="orders-section">
+        <h2>Pedidos Realizados</h2>
+        <table id="orders-table">
+            <!-- Los pedidos se agregarán aquí -->
+        </table>
+    </section>
+
     <script type="module">
-        // Importar las funciones necesarias de Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
         // Configuración de Firebase
         const firebaseConfig = {
@@ -26,7 +59,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase();
 
-        // Función para guardar el pedido en la base de datos
+        // Función para guardar un pedido en Firebase
         function saveOrder(order) {
             const orderRef = ref(db, 'orders/' + order.id);
             set(orderRef, {
@@ -37,7 +70,53 @@
             });
         }
 
-        // Enviar el pedido cuando el formulario sea enviado
+        // Función para obtener todos los pedidos desde Firebase
+        function getOrders() {
+            const ordersRef = ref(db, 'orders');
+            get(ordersRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const orders = snapshot.val();
+                    displayOrders(orders);
+                } else {
+                    console.log("No hay pedidos");
+                }
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+
+        // Función para mostrar los pedidos en una tabla
+        function displayOrders(orders) {
+            const ordersTable = document.getElementById("orders-table");
+            ordersTable.innerHTML = ""; // Limpiar la tabla
+
+            // Agregar los encabezados de la tabla
+            const headerRow = document.createElement("tr");
+            headerRow.innerHTML = `
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Producto</th>
+                <th>Precio</th>
+            `;
+            ordersTable.appendChild(headerRow);
+
+            // Recorrer los pedidos y agregarlos a la tabla
+            for (let orderId in orders) {
+                const order = orders[orderId];
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${orderId}</td>
+                    <td>${order.customerName}</td>
+                    <td>${order.customerAddress}</td>
+                    <td>${order.product}</td>
+                    <td>${order.price}</td>
+                `;
+                ordersTable.appendChild(row);
+            }
+        }
+
+        // Enviar el pedido cuando se complete el formulario
         document.getElementById("order-form").addEventListener("submit", function(e) {
             e.preventDefault();
 
@@ -60,57 +139,11 @@
 
             alert("¡Pedido realizado exitosamente!");
         });
-    </script>
-</head>
-<body>
 
-    <header>
-        <h1>Bienvenido a la Tienda de Camisetas</h1>
-    </header>
-
-    <section class="products">
-        <!-- Producto 1 -->
-        <div class="product" data-name="Camiseta Barcelona" data-price="100">
-            <img src="barca.png" alt="Camiseta Barcelona">
-            <h3>Camiseta Barcelona</h3>
-            <p>Precio: 100 MAD</p>
-            <button class="order-button" onclick="showOrderForm('Camiseta Barcelona', 100)">Pedir Ahora</button>
-        </div>
-
-        <!-- Producto 2 -->
-        <div class="product" data-name="Camiseta Real Madrid" data-price="120">
-            <img src="madrid.png" alt="Camiseta Real Madrid">
-            <h3>Camiseta Real Madrid</h3>
-            <p>Precio: 120 MAD</p>
-            <button class="order-button" onclick="showOrderForm('Camiseta Real Madrid', 120)">Pedir Ahora</button>
-        </div>
-
-        <!-- Producto 3 -->
-        <div class="product" data-name="Camiseta PSG" data-price="110">
-            <img src="psg.png" alt="Camiseta PSG">
-            <h3>Camiseta PSG</h3>
-            <p>Precio: 110 MAD</p>
-            <button class="order-button" onclick="showOrderForm('Camiseta PSG', 110)">Pedir Ahora</button>
-        </div>
-    </section>
-
-    <section id="order-form-container" class="hidden">
-        <h2>Realiza tu Pedido</h2>
-        <form id="order-form">
-            <input type="text" id="name" placeholder="Tu Nombre" required>
-            <input type="text" id="address" placeholder="Tu Dirección" required>
-            <input type="hidden" id="product">
-            <input type="hidden" id="price">
-            <button type="submit">Confirmar Pedido</button>
-        </form>
-    </section>
-
-    <script>
-        function showOrderForm(product, price) {
-            document.getElementById('product').value = product;
-            document.getElementById('price').value = price;
-            document.getElementById('order-form-container').classList.remove('hidden');
-        }
+        // Llamar a la función para obtener los pedidos cuando se carga la página
+        window.onload = function() {
+            getOrders();
+        };
     </script>
 </body>
 </html>
