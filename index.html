@@ -70,21 +70,33 @@
         footer button:hover {
             background-color: #0056b3;
         }
-        /* Estilo para la tabla de pedidos */
-        #ordersTableContainer {
+
+        /* Estilos del modal */
+        .modal {
             display: none;
-            margin-top: 2rem;
-        }
-        table {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
             width: 100%;
-            border-collapse: collapse;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
         }
-        table, th, td {
-            border: 1px solid #ddd;
+        .modal-content {
+            position: relative;
+            margin: 5% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            background: #fff;
+            border-radius: 8px;
         }
-        th, td {
-            padding: 8px 12px;
-            text-align: left;
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -113,82 +125,44 @@
         </div>
     </div>
 
-    <!-- Tabla de pedidos, inicialmente oculta -->
-    <div id="ordersTableContainer" class="container">
-        <h2>Pedidos Realizados</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>ID</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                </tr>
-            </thead>
-            <tbody id="ordersTableBody">
-                <!-- Las filas de los pedidos se insertarán aquí -->
-            </tbody>
-        </table>
+    <!-- Modal con el formulario -->
+    <div id="formModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <iframe 
+                src="https://docs.google.com/forms/d/e/1FAIpQLSeOuwAxn1GxnIj0YXb0QfBarylVbde5GJFAvCT3g7bUslCo_Q/viewform?embedded=true" 
+                width="100%" 
+                height="600" 
+                frameborder="0">
+                Cargando…
+            </iframe>
+        </div>
     </div>
 
     <footer>
         <p>&copy; 2024 Tienda de Camisetas de Fútbol</p>
-        <button onclick="goToAdmin()">Administrador</button>
+        <button onclick="openModal()">Comande</button>
     </footer>
 
-    <!-- Scripts -->
     <script>
-        // Agregar productos al carrito y guardarlos en localStorage
-        function addToCart(product, price) {
-            console.log('Agregando al carrito: ', product, price); // Debugging
-
-            const order = {
-                product: product,
-                id: Date.now(),  // Usamos la fecha como ID único
-                quantity: 1,
-                price: price
-            };
-            let orders = JSON.parse(localStorage.getItem('orders')) || [];
-            orders.push(order);
-            localStorage.setItem('orders', JSON.stringify(orders));
-            
-            console.log('Pedidos guardados: ', orders); // Verificar que los pedidos están guardados
+        // Abrir el modal
+        function openModal() {
+            document.getElementById('formModal').style.display = 'block';
         }
 
-        // Cargar los pedidos almacenados en localStorage
-        function loadOrders() {
-            console.log('Cargando pedidos...'); // Debugging
-
-            const orders = JSON.parse(localStorage.getItem('orders')) || [];
-            const tableBody = document.getElementById('ordersTableBody');
-            tableBody.innerHTML = '';  // Limpiar la tabla antes de agregar nuevas filas
-
-            orders.forEach(order => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${order.product}</td>
-                    <td>${order.id}</td>
-                    <td>${order.quantity}</td>
-                    <td>${order.price}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-
-            console.log('Pedidos cargados: ', orders); // Verificar que los pedidos se muestran
+        // Cerrar el modal
+        function closeModal() {
+            document.getElementById('formModal').style.display = 'none';
         }
 
-        // Función de administrador que solicita la contraseña
-        function goToAdmin() {
-            const password = prompt("Introduce la contraseña de administrador:");
-            if (password === "admin123") {
-                alert("Acceso concedido. Mostrando los pedidos...");
-                // Mostrar la tabla de pedidos
-                document.getElementById('ordersTableContainer').style.display = 'block';
-                loadOrders();  // Cargar y mostrar los pedidos
-            } else {
-                alert("Contraseña incorrecta.");
+        // Simular redirección al sitio principal después del envío
+        window.addEventListener("message", function(event) {
+            if (event.data === "formSubmitted") {
+                closeModal();
+                alert("Formulario enviado. Gracias por tu pedido.");
+                window.location.href = "/"; // Redirigir al inicio
             }
-        }
+        });
     </script>
 </body>
 </html>
